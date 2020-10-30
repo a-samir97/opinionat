@@ -1,0 +1,4 @@
+[client]
+database = aliens
+user = ahmedsamir
+password = postgres
