@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'users',
 
     # 3rd party apps 
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 # Custome User
@@ -90,6 +92,12 @@ DATABASES = {
         'PASSWORD': 'postgres',
         'HOST': 'localhost'
     }
+}
+
+REST_FRAMEWORK = {
+  'DEFAULT_AUTHENTICATION_CLASSES': (
+      'rest_framework.authentication.TokenAuthentication',
+    )
 }
 
 # Password validation
