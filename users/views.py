@@ -31,16 +31,19 @@ class LoginAPIView(APIView):
 
     def post(self, request):
 
-        user = authenticate(
-            username=request.data['username'], 
-            password=request.data['password']
-        )
-        if user:
-            token = Token.objects.create(user=user)
-            return Response({'token':token.key}, status=status.HTTP_200_OK)
-        else:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        if request.data.get('username') and request.data.get('password'):
+            user = authenticate(
+                username=request.data['username'], 
+                password=request.data['password']
+            )
+            if user:
+                token, _ = Token.objects.get_or_create(user=user)
+                return Response({'token':token.key}, status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_404_NOT_FOUND)
 
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 

@@ -3,7 +3,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from .models import User
 
-class UserTests(APITestCase):
+class UserRegisterTests(APITestCase):
 
     def setUp(self):
         '''
@@ -170,4 +170,72 @@ class UserTests(APITestCase):
         self.assertEqual(User.objects.all().count(), 1)
 
         self.assertEqual(len(response.data['password']), 1)
-        
+
+class UserLoginTests(APITestCase):
+
+    def setUp(self):
+        '''
+            Set up function for testing our code
+        '''
+        self.test_user = User.objects.create_user(
+            username='testusername',
+            email='test@test.com',
+            password='testpassword',
+            phone='123456789'
+        )
+
+        self.create_login_url = reverse('login-user')
+    
+    def test_login_user_with_valid_data(self):
+
+        """
+            Login user with valid data
+        """
+
+        data = {
+            "username": "testusername",
+            "password": "testpassword"
+        }
+
+        response = self.client.post(self.create_login_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+    def test_login_user_with_no_username(self):
+        """
+            Ensure that user will not input empty username
+        """
+
+        data = {
+            "username": "",
+            "password": "testpassword"
+        }
+
+        response = self.client.post(self.create_login_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_login_user_with_no_password(self):
+        """
+            Ensure that user will not input empty password
+        """
+        data = {
+            "username": "testusername",
+            "password": ""
+        }
+
+        response = self.client.post(self.create_login_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_login_user_with_invalid_data(self):
+        """
+            Ensure that user will not pass invalid data while login
+        """
+        data = {
+            "username": "username",
+            "password": "password"
+        }
+        response = self.client.post(self.create_login_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
